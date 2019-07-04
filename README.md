@@ -48,3 +48,17 @@ Il faut se connecter au magasin visé avant de pouvoir en extraire les informati
 - URL
 - URL de l’image
 - quantité
+
+-----------------------------------------------------------------
+ETAPES POUR TESTER LE SCRAPING :
+1 - Configuration du système
+- Vous devez avoir minimum python 3.5 installé sur votre machine
+- Vous créez votre virtualenv, Sinon installer : $ virtualenv --python=python3 venv
+- Installer scrapy : $ pip install scrapy
+- Copier le projet 'intermarche'
+
+2 - Commencez le test avec en lançant une à une les commandes suivantes et récuperer les fichiers jsons:
+- scrapy crawl spider_magasin -o magasins.json
+- scrapy crawl spider_category -o categories.json
+- scrapy crawl spider_product -o produits.json
+- scrapy crawl spider_product_info -o produits_fiches.json
