@@ -6,7 +6,6 @@ class SpiderMagasin(scrapy.Spider):
 	""" Récupération de la lsite des magasins"""
 	name = "spider_magasin"
 	url_base = 'https://drive.intermarche.com'
-	counter_id = 0
 	
 	def start_requests(self):
 		urls = [
@@ -17,22 +16,20 @@ class SpiderMagasin(scrapy.Spider):
 
 	def parse(self, response):
 		items = []
-		
 		for sel in response.xpath("//div[contains(@id,'listeDepartements')]/*//a"):
+
 			url_info = self.url_base + sel.xpath("@href").extract()[0]
 			if len(url_info.split('/')) == 6:
 				item = MagasinItem()
-				self.counter_id += 1
-
-				id = str(self.counter_id)
+				
 				nom = sel.xpath("text()").extract()[0]
 				url_info = url_info
 				url_drive = self.url_base + '/' + url_info.split('/')[5]
 				ville = sel.xpath("text()").extract()[0].split('(')[0].strip()
 				cp = sel.xpath("text()").extract()[0].split('(')[1].strip()[0:-1]
-				
+
 				yield scrapy.Request(url_info, callback=self.parse_info, meta={'item': {
-					'id': id,
+					'id': "",
 					'nom': nom,
 					'url_info': url_info,
 					'url_drive': url_drive,
