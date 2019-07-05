@@ -6,7 +6,6 @@ class SpiderProductInfo(scrapy.Spider):
 	""" Récupération de la liste des fiches produits d'un magasin """
 	name = "spider_product_info"
 	allowed_domains = ['https://drive.intermarche.com', 'drive.intermarche.com']
-	counter_id = 0
 
 	def start_requests(self):
 		urls = [
@@ -20,6 +19,7 @@ class SpiderProductInfo(scrapy.Spider):
 		"""Iterate each url"""
 		ulrs_driver = []
 
+		# Extracter les urls drives
 		for sel in response.xpath("//ul/li/a"):
 			h = sel.xpath("@href").extract()
 			v = '/153-mitry-mory'
@@ -28,6 +28,7 @@ class SpiderProductInfo(scrapy.Spider):
 					url = self.allowed_domains[0] + '/' + h[0]
 					ulrs_driver.append(url)
 		
+		# Nettoyer la liste des drives (présence des doublons)
 		ulrs_driver = list(dict.fromkeys(ulrs_driver))
 
 		for url_drive in ulrs_driver:
@@ -36,7 +37,6 @@ class SpiderProductInfo(scrapy.Spider):
 	def parse_item(self, response):
 		"""Extract all items from url"""
 		items = []
-		
 		for sel in response.xpath("//li[contains(@class,'vignette_produit_info js-vignette_produit')]/div"):
 			info = sel.xpath("div[contains(@class, 'vignette_info')]/p/text()").extract()
 			
@@ -49,7 +49,7 @@ class SpiderProductInfo(scrapy.Spider):
 				item = ProductInfoItem()
 				self.counter_id += 1
 
-				item['id'] = str(self.counter_id)
+				item['id'] = ""
 				item['nom'] = info[1].strip()
 				item['marque'] = info[0].strip()
 				item['url'] = self.allowed_domains[0] + '/FicheProduit?idProduit=' + url[0]
