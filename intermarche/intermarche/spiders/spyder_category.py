@@ -5,12 +5,13 @@ from ..items import CategoryItem
 class SpiderCategory(scrapy.Spider):
 	""" Récupération de la lsite des catégories d'un magasin """
 	name = "spider_category"
-	url_base = 'https://drive.intermarche.com'
+	allowed_domains = ['https://drive.intermarche.com', 'drive.intermarche.com']
 	
 	def start_requests(self):
 		urls = [
 			'https://drive.intermarche.com/153-mitry-mory',
 		]
+		
 		for url in urls:
 			yield scrapy.Request(url=url, callback=self.parse)
 
@@ -28,8 +29,7 @@ class SpiderCategory(scrapy.Spider):
 			# 1 - Création de l'item enfant
 			item = CategoryItem()
 			
-			id_parent = i
-			item['id'] = 0
+			item['id'] = ""
 			item['magasin_id'] = data[1].split('-')[0]
 			
 			# Trouver le rayon parent
@@ -50,13 +50,13 @@ class SpiderCategory(scrapy.Spider):
 			
 			item['categorie'] = sel.xpath('text()').extract()[0]
 			item['categorie_id'] = data[5].split('-')[0]
-			item['categorie_url'] = self.url_base + '/' + url
+			item['categorie_url'] = self.allowed_domains[0] + '/' + url
 			item['feuille'] = str(True)
 
 			# 2 - Create item Parent (rayon principal)
 			item_parent = CategoryItem()
 			
-			item_parent['id'] = 0
+			item_parent['id'] = ""
 			item_parent['magasin_id'] = data[1].split('-')[0]
 			item_parent['rayon'] = name
 			item_parent['sous_rayon'] = ""
@@ -68,7 +68,7 @@ class SpiderCategory(scrapy.Spider):
 			# 3 - Create item Enfant (sour-rayon)
 			item_enfant = CategoryItem()
 
-			item_enfant['id'] = 0
+			item_enfant['id'] = ""
 			item_enfant['magasin_id'] = data[1].split('-')[0]
 			item_enfant['rayon'] = name
 			item_enfant['sous_rayon'] = item['sous_rayon']
