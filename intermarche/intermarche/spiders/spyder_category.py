@@ -63,6 +63,6 @@ class SpiderCategory(scrapy.Spider):
 			item_parent['categorie_url'] = self.url_base + '/' + url
 			item_parent['feuille'] = str(False)
 
-			yield item_parent
+			# yield item_parent
 
 			yield item
