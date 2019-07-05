@@ -6,7 +6,6 @@ class SpiderProduct(scrapy.Spider):
 	""" Récupération de la liste des produits d'un magasin """
 	name = "spider_product"
 	allowed_domains = ['https://drive.intermarche.com', 'drive.intermarche.com']
-	counter_id = 0
 	
 	def start_requests(self):
 		urls = [
@@ -20,6 +19,7 @@ class SpiderProduct(scrapy.Spider):
 		"""Iterate each url"""
 		ulrs_driver = []
 
+		# Extracter les urls drives
 		for sel in response.xpath("//ul/li/a"):
 			h = sel.xpath("@href").extract()
 			v = '/153-mitry-mory'
@@ -35,8 +35,7 @@ class SpiderProduct(scrapy.Spider):
 			yield scrapy.Request(url_drive, callback=self.parse_item)
 		
 	def parse_item(self, response):
-		"""Extract all items from url"""
-		
+		"""Extraire les urls de drive du magasin"""
 		for sel in response.xpath("//li[contains(@class,'vignette_produit_info js-vignette_produit')]/div"):
 			info = sel.xpath("div[contains(@class, 'vignette_info')]/p/text()").extract()
 			prix = sel.xpath("div[contains(@class, 'vignette_picto_prix')]/div/p/text()").extract()
@@ -47,7 +46,7 @@ class SpiderProduct(scrapy.Spider):
 				item = ProductItem()
 				self.counter_id += 1
 
-				item['id'] = str(self.counter_id)
+				item['id'] = ""
 				item['nom'] = info[1].strip()
 				item['prix'] = prix[0]
 				
