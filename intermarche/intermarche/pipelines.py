@@ -7,5 +7,12 @@
 
 
 class IntermarchePipeline(object):
-    def process_item(self, item, spider):
-        return item
+	counter_id = 0
+
+	def process_item(self, item, spider):
+		if spider.name == 'spider_category':
+			self.counter_id += 1
+			item['id'] = self.counter_id
+            return item
+        
+		return item
